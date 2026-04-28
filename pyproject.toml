@@ -86,8 +86,11 @@ omit = [
     "src/shared_circuits/models/loader.py",
     "src/shared_circuits/models/parallelism.py",
     "src/shared_circuits/cli.py",
-    # the two heavy analyses below have GPU-only inner machinery; their config/CLI
+    # the analyses below have GPU-only inner machinery; their config/CLI
     # surface is tested but the per-edge / per-layer guts need a real model
     "src/shared_circuits/analyses/breadth.py",
     "src/shared_circuits/analyses/path_patching.py",
+    "src/shared_circuits/analyses/head_zeroing.py",
+    "src/shared_circuits/analyses/reverse_projection.py",
+    "src/shared_circuits/analyses/steering.py",
 ]

@@ -14,7 +14,7 @@ from scipy.stats import pearsonr, spearmanr
 from shared_circuits.attribution import compute_head_importance_grid, compute_head_importances
 from shared_circuits.data import load_triviaqa_pairs
 from shared_circuits.experiment import ExperimentContext, model_session, save_results
-from shared_circuits.extraction import extract_residual_stream
+from shared_circuits.extraction import extract_residual_stream, measure_agreement_rate
 from shared_circuits.prompts import build_lying_prompts, build_sycophancy_prompts
 
 _DEFAULT_N_PAIRS: Final = 400
@@ -137,35 +137,15 @@ def _head_overlap(ctx: ExperimentContext, pairs: list[tuple[str, str, str]], cfg
     return {'syc_grid': syc_grid.tolist(), 'lie_grid': lie_grid.tolist(), 'stats': stats}
 
 
-@torch.no_grad()
-def _measure_agreement(
-    model: HookedTransformer,
-    prompts: list[str],
-    agree_tokens: tuple[int, ...],
-    disagree_tokens: tuple[int, ...],
-    batch: int,
-    hooks: list | None = None,
-) -> float:
-    pad_id = getattr(model.tokenizer, 'pad_token_id', None) or 0
-    agree = 0
-    for i in range(0, len(prompts), batch):
-        batch_prompts = prompts[i : i + batch]
-        tokens = model.to_tokens(batch_prompts, prepend_bos=True)
-        seq_lens = [int(x) for x in ((tokens != pad_id).sum(dim=1) - 1).tolist()]
-        if hooks:
-            logits = model.run_with_hooks(tokens, fwd_hooks=hooks)
-        else:
-            logits = model(tokens)
-        for b in range(len(batch_prompts)):
-            nl = logits[b, seq_lens[b]]
-            if nl[list(agree_tokens)].max() > nl[list(disagree_tokens)].max():
-                agree += 1
-    return agree / len(prompts)
-
-
 def _baseline(ctx: ExperimentContext, pairs: list[tuple[str, str, str]], cfg: BreadthConfig) -> float:
     wrong, _ = build_sycophancy_prompts(pairs[100 : 100 + cfg.baseline_prompts], ctx.model_name)
-    return _measure_agreement(ctx.model, wrong, ctx.agree_tokens, ctx.disagree_tokens, cfg.batch)
+    return measure_agreement_rate(
+        ctx.model,
+        wrong,
+        ctx.agree_tokens,
+        ctx.disagree_tokens,
+        batch_size=cfg.batch,
+    )
 
 
 def _make_steer_hook(alpha: int, direction: torch.Tensor, seq_lens: list[int]):
@@ -178,7 +158,6 @@ def _make_steer_hook(alpha: int, direction: torch.Tensor, seq_lens: list[int]):
     return hook_fn
 
 
-@torch.no_grad()
 def _steer_measure(
     model: HookedTransformer,
     prompts: list[str],
@@ -190,24 +169,38 @@ def _steer_measure(
     batch: int,
 ) -> float:
     pad_id = getattr(model.tokenizer, 'pad_token_id', None) or 0
-    agree = 0
-    hook_name = f'blocks.{layer}.hook_resid_post'
+    if alpha == 0:
+        return measure_agreement_rate(model, prompts, agree_tokens, disagree_tokens, batch_size=batch)
+    # the steer hook needs per-batch ``seq_lens``, so we call the per-prompt
+    # helper inside our own batching loop and fold the per-batch hook closures
+    rate_total = 0
     for i in range(0, len(prompts), batch):
         batch_prompts = prompts[i : i + batch]
         tokens = model.to_tokens(batch_prompts, prepend_bos=True)
         seq_lens = [int(x) for x in ((tokens != pad_id).sum(dim=1) - 1).tolist()]
-        if alpha == 0:
-            logits = model(tokens)
-        else:
-            logits = model.run_with_hooks(
-                tokens,
-                fwd_hooks=[(hook_name, _make_steer_hook(alpha, direction, seq_lens))],
-            )
-        for b in range(len(batch_prompts)):
-            nl = logits[b, seq_lens[b]]
-            if nl[list(agree_tokens)].max() > nl[list(disagree_tokens)].max():
-                agree += 1
-    return agree / len(prompts)
+        hooks = [(f'blocks.{layer}.hook_resid_post', _make_steer_hook(alpha, direction, seq_lens))]
+        rate, _ = _logits_to_rate(model, tokens, seq_lens, hooks, agree_tokens, disagree_tokens)
+        rate_total += rate * len(batch_prompts)
+    return rate_total / len(prompts)
+
+
+@torch.no_grad()
+def _logits_to_rate(
+    model: HookedTransformer,
+    tokens: torch.Tensor,
+    seq_lens: list[int],
+    hooks: list,
+    agree_tokens: tuple[int, ...],
+    disagree_tokens: tuple[int, ...],
+) -> tuple[float, list[float]]:
+    logits = model.run_with_hooks(tokens, fwd_hooks=hooks)
+    per_prompt: list[float] = []
+    agree_idx = list(agree_tokens)
+    disagree_idx = list(disagree_tokens)
+    for b in range(tokens.shape[0]):
+        nl = logits[b, seq_lens[b]].float()
+        per_prompt.append(1.0 if float(nl[agree_idx].max()) > float(nl[disagree_idx].max()) else 0.0)
+    return (sum(per_prompt) / len(per_prompt) if per_prompt else 0.0), per_prompt
 
 
 def _steering_sweep(ctx: ExperimentContext, pairs: list[tuple[str, str, str]], cfg: BreadthConfig) -> dict:

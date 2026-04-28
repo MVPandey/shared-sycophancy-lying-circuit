@@ -8,11 +8,24 @@ from types import ModuleType
 from typing import Final
 
 ANALYSES: Final[tuple[str, ...]] = (
-    'circuit-overlap',
-    'causal-ablation',
     'attribution-patching',
     'breadth',
+    'causal-ablation',
+    'circuit-overlap',
+    'direction-analysis',
+    'faithfulness',
+    'head-zeroing',
+    'layer-strat-null',
+    'logit-lens',
+    'norm-matched',
+    'nq-replication',
+    'opinion-causal',
     'path-patching',
+    'probe-transfer',
+    'projection-ablation',
+    'reverse-projection',
+    'steering',
+    'triple-intersection',
 )
 
 
@@ -30,7 +43,11 @@ def main(argv: list[str] | None = None) -> None:
     run_sub = run_parser.add_subparsers(dest='analysis', required=True)
     for slug in ANALYSES:
         mod = _module_for(slug)
-        help_text = (mod.__doc__ or slug).splitlines()[0]
+        # walk past a leading blank line so multiline `"""\nSummary...` docstrings render
+        help_text = next(
+            (line.strip() for line in (mod.__doc__ or slug).splitlines() if line.strip()),
+            slug,
+        )
         analysis_parser = run_sub.add_parser(slug, help=help_text, description=help_text)
         mod.add_cli_args(analysis_parser)
 
