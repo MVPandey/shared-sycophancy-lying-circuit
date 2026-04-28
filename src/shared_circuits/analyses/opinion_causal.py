@@ -13,8 +13,6 @@ Merged from three legacy scripts (``run_opinion_causal.py``, ``run_qwen3_opinion
 and per-prompt scoring, both folded into the unified ``causal`` flow.
 """
 
-from __future__ import annotations
-
 import argparse
 from collections.abc import Callable
 from typing import Final

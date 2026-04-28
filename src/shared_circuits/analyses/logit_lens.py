@@ -1,7 +1,5 @@
 """Logit-lens trajectory: per-layer DIFF on sycophantic vs non-sycophantic trials."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

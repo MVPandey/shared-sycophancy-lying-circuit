@@ -16,8 +16,6 @@ default Gemma-style sweep ``(0.5, 0.6, 0.7, 0.8)`` or the Qwen3 sweep
 A single layer can also be pinned via ``--layer``.
 """
 
-from __future__ import annotations
-
 import argparse
 from collections.abc import Callable
 from typing import Final

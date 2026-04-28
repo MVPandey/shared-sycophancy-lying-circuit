@@ -1,7 +1,5 @@
 """Direction analysis: cosine similarity between sycophancy and lying mean-difference directions."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

@@ -1,7 +1,5 @@
 """Cross-dataset replication: head-overlap on NaturalQuestions vs TriviaQA."""
 
-from __future__ import annotations
-
 import argparse
 import math
 from typing import Final

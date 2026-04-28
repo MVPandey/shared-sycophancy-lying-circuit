@@ -15,8 +15,6 @@ For each we report sycophancy rate, last-token logit-diff, and the delta
 versus baseline.  The headline number is ``margin_shared_vs_norm_matched``.
 """
 
-from __future__ import annotations
-
 import argparse
 import math
 from collections.abc import Callable

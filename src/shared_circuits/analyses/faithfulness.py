@@ -16,8 +16,6 @@ Reads the shared-heads ranking from a sibling analysis JSON (default
 :mod:`shared_circuits.analyses.attribution_patching`.
 """
 
-from __future__ import annotations
-
 import argparse
 import math
 from collections.abc import Callable

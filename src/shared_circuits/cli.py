@@ -1,7 +1,5 @@
 """Command-line interface for shared-circuits analyses."""
 
-from __future__ import annotations
-
 import argparse
 import importlib
 from types import ModuleType

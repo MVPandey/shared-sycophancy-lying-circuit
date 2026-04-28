@@ -1,7 +1,5 @@
 """Probe transfer: train logistic-regression probe on sycophancy, evaluate on lying."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

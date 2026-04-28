@@ -18,8 +18,6 @@ sycophancy rate (agreement with wrong-opinion prompts) and factual lying rate
 in pairs against the no-ablation baseline to produce 95% CIs on the deltas.
 """
 
-from __future__ import annotations
-
 import argparse
 import math
 from collections.abc import Callable

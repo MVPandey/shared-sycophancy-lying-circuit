@@ -1,7 +1,5 @@
 """Generic breadth validation: head overlap + behavioral steering for a single model."""
 
-from __future__ import annotations
-
 import argparse
 import math
 from typing import Final
@@ -159,7 +157,7 @@ def _make_steer_hook(alpha: int, direction: torch.Tensor, seq_lens: list[int]):
 
 
 def _steer_measure(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     prompts: list[str],
     direction: torch.Tensor,
     layer: int,
@@ -186,7 +184,7 @@ def _steer_measure(
 
 @torch.no_grad()
 def _logits_to_rate(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     tokens: torch.Tensor,
     seq_lens: list[int],
     hooks: list,

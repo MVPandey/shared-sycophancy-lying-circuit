@@ -1,7 +1,5 @@
 """Layer-stratified permutation null for sycophancy/lying head-overlap."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

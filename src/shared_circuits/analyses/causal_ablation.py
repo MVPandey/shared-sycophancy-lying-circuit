@@ -1,7 +1,5 @@
 """Causal ablation: zero-out shared heads and measure probe AUROC + direction cosine."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

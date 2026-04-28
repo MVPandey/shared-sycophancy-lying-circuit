@@ -1,7 +1,5 @@
 """DLA-based head overlap between sycophancy and lying paradigms."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

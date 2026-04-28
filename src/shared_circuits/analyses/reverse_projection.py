@@ -22,8 +22,6 @@ reproducing the DPO-fine-tuned variant: directions are loaded from a previous
 ``direction_analysis``-style results file rather than recomputed.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 from collections.abc import Callable

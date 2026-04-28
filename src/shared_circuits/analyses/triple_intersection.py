@@ -1,7 +1,5 @@
 """Triple-intersection permutation test: opinion ∩ sycophancy ∩ lying top-K head overlap."""
 
-from __future__ import annotations
-
 import argparse
 import math
 from typing import Final

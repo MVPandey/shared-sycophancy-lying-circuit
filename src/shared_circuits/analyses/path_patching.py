@@ -6,8 +6,6 @@ For each ordered pair (source, receiver) where ``source`` is a shared head and
 unembed, we measure the *direct* causal effect of the source -> receiver edge.
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import math
@@ -162,7 +160,7 @@ def _analyse(
 
 @torch.no_grad()
 def _find_answer_tokens(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     prompts: list[str],
     agree_t: list[int],
     disagree_t: list[int],
@@ -198,7 +196,7 @@ def _find_answer_tokens(
     return ext_tokens, positions, warmups
 
 
-def _task_tokens(model: HookedTransformer, task: str) -> tuple[list[int], list[int]]:
+def _task_tokens(model: 'HookedTransformer', task: str) -> tuple[list[int], list[int]]:
     """Per-task positive vs negative token sets used for ``logit_diff``."""
     if task == 'sycophancy':
         agree, disagree = get_agree_disagree_tokens(model)
@@ -282,7 +280,7 @@ def _sample_non_shared(
 
 
 def _layer_directions(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     corrupt_prompts: list[str],
     clean_prompts: list[str],
     batch: int,
@@ -299,7 +297,7 @@ def _layer_directions(
 
 @torch.no_grad()
 def _cache_all(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     tokens: torch.Tensor,
     measurement_pos: int,
     agree_t: list[int],
@@ -405,7 +403,7 @@ def _patch_hooks(
 
 @torch.no_grad()
 def _measure_edge(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     corrupt_tokens: torch.Tensor,
     source: tuple[int, int],
     receiver: tuple[int, int] | str,
@@ -471,7 +469,7 @@ def _edge_key(src: tuple[int, int], recv: tuple[int, int] | str) -> str:
 
 
 def _process_pair(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     clean_tokens: torch.Tensor,
     clean_pos: int,
     corrupt_tokens: torch.Tensor,
@@ -525,7 +523,7 @@ def _aggregate(
 
 
 def _prepare_tokens_and_positions(
-    model: HookedTransformer,
+    model: 'HookedTransformer',
     wrong_prompts: list[str],
     correct_prompts: list[str],
     agree_t: list[int],

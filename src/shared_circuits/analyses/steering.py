@@ -1,7 +1,5 @@
 """Behavioral steering: dose-response of the syc direction at a chosen layer."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 

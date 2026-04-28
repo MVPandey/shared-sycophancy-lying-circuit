@@ -1,7 +1,5 @@
 """Attribution patching: causal validation of DLA-identified heads."""
 
-from __future__ import annotations
-
 import argparse
 from typing import Final
 
