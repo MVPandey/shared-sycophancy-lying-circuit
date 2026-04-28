@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 import torch
 
+from shared_circuits.config import TL_ARCH_OVERRIDES
 from shared_circuits.models.parallelism import distribute_pipeline_parallel
 
 
@@ -58,9 +59,8 @@ def load_model(
         Loaded HookedTransformer instance.
 
     """
-    from transformer_lens import HookedTransformer
-
-    from shared_circuits.config import TL_ARCH_OVERRIDES
+    # deferred: transformer_lens pulls in transformers + heavy CUDA init at module load
+    from transformer_lens import HookedTransformer  # noqa: PLC0415
 
     torch_dtype = getattr(torch, dtype)
     if weight_repo is None:
@@ -76,12 +76,13 @@ def load_model(
     #   2. TL's MoE uses nn.Linear (float32 default) instead of
     #      nn.Parameter(..., dtype=cfg.dtype), so MoE models like Mixtral end up
     #      2x expected size until explicitly cast.
-    from transformers import AutoModelForCausalLM
+    # deferred: transformers pulls a few seconds of CUDA + tokenizer init at module load
+    from transformers import AutoModelForCausalLM  # noqa: PLC0415
 
     hf_kwargs: dict[str, object] = {'torch_dtype': torch_dtype, 'low_cpu_mem_usage': True, 'device_map': 'cpu'}
     repo = weight_repo or model_name
     if weight_repo:
-        from transformers import AutoTokenizer
+        from transformers import AutoTokenizer  # noqa: PLC0415
 
         tokenizer = AutoTokenizer.from_pretrained(weight_repo)
         hf_model = AutoModelForCausalLM.from_pretrained(repo, **hf_kwargs)

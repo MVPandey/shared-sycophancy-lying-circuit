@@ -1,3 +1,5 @@
+import dataclasses
+
 import numpy as np
 import pytest
 
@@ -81,8 +83,6 @@ class TestBatchedExtractorRun:
 
 class TestHookSpec:
     def test_is_frozen(self):
-        import dataclasses
-
         spec = HookSpec(name='blocks.0.attn.hook_z', fn=lambda z, h: z)
         with pytest.raises((dataclasses.FrozenInstanceError, AttributeError)):
             spec.name = 'changed'  # ty: ignore[invalid-assignment]

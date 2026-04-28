@@ -21,7 +21,8 @@ def load_triviaqa_pairs(n: int = 400) -> list[tuple[str, str, str]]:
         List of (question, wrong_answer, correct_answer) tuples.
 
     """
-    from datasets import load_dataset
+    # deferred: datasets pulls pyarrow + HF hub state at module load
+    from datasets import load_dataset  # noqa: PLC0415
 
     ds = load_dataset('trivia_qa', 'unfiltered.nocontext', split='validation', streaming=True)
     pairs: list[tuple[str, str]] = []
