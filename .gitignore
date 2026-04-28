@@ -1,0 +1,39 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+build/
+dist/
+*.egg-info/
+
+# IDE
+.idea/
+.vscode/
+
+# Archived scripts
+old_scripts/
+
+# Legacy experiment scripts pending migration into shared_circuits.analyses
+experiments/
+
+# Persisted analysis outputs
+out/
+results/
+
+# OS
+.DS_Store
