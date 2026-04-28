@@ -52,7 +52,7 @@ module-root = "src"
 [tool.ruff]
 fix = true
 line-length = 120
-exclude = ["experiments", "old_scripts", "overleaf"]
+exclude = ["experiments", "old_scripts"]
 
 [tool.ruff.lint]
 extend-select = ["D", "RUF", "PT", "TID", "I", "PL"]

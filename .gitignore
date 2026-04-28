@@ -1,13 +1,3 @@
-# LaTeX build artifacts
-*.aux
-*.bbl
-*.blg
-*.log
-*.out
-*.synctex.gz
-*.fls
-*.fdb_latexmk
-
 # Python
 __pycache__/
 *.pyc
@@ -25,10 +15,7 @@ dist/
 .idea/
 .vscode/
 
-# Archived scripts
-old_scripts/
-
-# Legacy experiment scripts pending migration into shared_circuits.analyses
+# Local-only legacy scripts not part of the public release
 experiments/
 
 # Persisted analysis outputs

@@ -249,7 +249,7 @@ make zephyr-natural-experiment   # same on Mistral-7B + Zephyr-7B
 
 Each is a thin `shared-circuits run ...` composition.
 
-A coverage matrix mirroring the per-model table above is reproduced in Appendix C of the paper (`overleaf/sections/appendix.tex`) — both should stay in sync.
+A coverage matrix mirroring the per-model table above is reproduced in Appendix C of the paper.
 
 ---
 
