@@ -5,13 +5,17 @@ description = "Shared incorrectness-detection circuitry underlies factual sycoph
 readme = "README.md"
 requires-python = ">=3.13, <3.14"
 dependencies = [
+    "accelerate>=1.0.0",
     "datasets>=3.0.0",
+    "huggingface-hub>=0.25.0",
     "numpy>=2.0.0",
+    "peft>=0.13.0",
     "pydantic>=2.0.0",
     "scipy>=1.14.0",
     "scikit-learn>=1.5.0",
     "torch>=2.8.0",
     "transformer-lens>=2.0.0",
+    "trl>=0.12.0",
     "tqdm>=4.66.0",
 ]
 
@@ -93,4 +97,7 @@ omit = [
     "src/shared_circuits/analyses/head_zeroing.py",
     "src/shared_circuits/analyses/reverse_projection.py",
     "src/shared_circuits/analyses/steering.py",
+    "src/shared_circuits/analyses/activation_patching.py",
+    "src/shared_circuits/analyses/mlp_ablation.py",
+    "src/shared_circuits/analyses/mlp_mediation.py",
 ]
