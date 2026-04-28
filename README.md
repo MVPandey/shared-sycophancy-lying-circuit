@@ -8,12 +8,12 @@ When a language model sycophantically agrees with a user's false belief, is it f
 
 ## Requirements
 
-| Requirement | Version | Notes |
-|---|---|---|
-| Python | **3.13.9** | Pinned via `.python-version`. 3.13.8 has a `torch._jit_internal._overload_method` AST regression that breaks `import torch`; 3.13.9 fixes it. |
-| `uv` | ≥ 0.9 | Dependency + virtualenv manager. `brew install uv`. |
-| GPU | recommended | All real analyses load a TransformerLens `HookedTransformer`. CPU works for the unit tests (mocked) but not for any `shared-circuits run` command on a real model. |
-| GPU memory | 24–80 GB | 7B models fit on a single 24 GB GPU; 32B and 72B require pipeline-parallel splitting via `--n-devices`. |
+| Requirement | Version                   | Notes |
+|---|---------------------------|---|
+| Python | **3.13.9**                | Pinned via `.python-version`. 3.13.8 has a `torch._jit_internal._overload_method` AST regression that breaks `import torch`; 3.13.9 fixes it. |
+| `uv` | ≥ 0.9                     | Dependency + virtualenv manager. `brew install uv`. |
+| GPU | recommended               | All real analyses load a TransformerLens `HookedTransformer`. CPU works for the unit tests (mocked) but not for any `shared-circuits run` command on a real model. |
+| GPU memory | 24–141 GB                 | 7B models fit on a single 24 GB GPU; 32B and 72B require pipeline-parallel splitting via `--n-devices`. |
 | HuggingFace token | required for gated models | `hf auth login` before pulling Gemma, Llama, etc. The library reads `WEIGHT_MIRRORS_JSON` (`{model_name: mirror_repo}`) for fallbacks when the official repo is gated. |
 
 ### Runtime dependencies
@@ -114,6 +114,5 @@ Lockfile and toolchain config live in `pyproject.toml`. The coverage gate omits 
 
 ## Notes
 
-- **Legacy experiment scripts** — the 42 not-yet-migrated `experiments/run_*.py` scripts from the original codebase are kept locally for migration reference but are git-ignored. The five flagship analyses listed above replace `run_circuit_overlap.py`, `run_causal_ablation.py`, `run_attribution_patching.py`, `run_breadth.py`, and `run_path_patching.py`. The remaining 37 will be folded into `shared_circuits.analyses` over time.
 - **Weight mirrors** — `WEIGHT_MIRRORS_JSON='{"original-repo": "mirror-repo"}'` makes `load_model` fetch weights from the mirror while still telling TransformerLens the architecture is `original-repo`. Useful when an official HF repo is gated and a public mirror exists.
 - **Reproducibility** — all randomness routes through `RANDOM_SEED` in `config.py` and per-analysis `--seed` flags. Bootstrap CIs use `BOOTSTRAP_ITERATIONS = 500`; permutation tests use `PERMUTATION_ITERATIONS = 1000`.
