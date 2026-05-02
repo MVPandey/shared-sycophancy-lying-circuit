@@ -76,6 +76,10 @@ uv run shared-circuits run probe-transfer \
 
 §3.5, **Table 4** (`tab:rlhf`). Headline result: anti-sycophancy DPO drops sycophancy **93%** on Mistral (28%→2%) and **46%** on Gemma-2-2B-IT (52%→28%). Probe-transfer AUROC deltas: anti-syc `|Δ| ≤ 0.026`, sham `|Δ| ≤ 0.002` — both inside the ±0.05 equivalence margin. [`reverse-projection`](reverse-projection.md) on the post-DPO models shows *increased* cross-task coupling: ablating `d_syc` drops the lying gap 18% (Mistral) / 54% (Gemma); ablating `d_lie` drops sycophancy 22% (Mistral) / 42% (Gemma). The substrate didn't move; the routing did.
 
+## The exact JSONLs the paper trained on
+
+Committed at [`data/dpo/`](../../data/dpo/) — `antisyc_dpo_{train,eval}.jsonl` and `sham_dpo_{train,eval}.jsonl`. Train splits are 1,000 rows; eval splits are 98. See [`data/dpo/README.md`](../../data/dpo/README.md) for the schema and the train/eval index slicing. The library helpers (`build_antisyc_preferences`, `build_sham_preferences`) regenerate equivalent content deterministically — the JSONLs are pinned so reviewers can diff against the exact dataset the paper trained on without re-deriving from the TriviaQA stream.
+
 ## Source
 
 `src/shared_circuits/analyses/dpo_antisyc.py` (~150 lines) plus `src/shared_circuits/data/dpo_preferences.py` (the `build_antisyc_preferences` and `build_sham_preferences` library helpers). Uses `trl.DPOTrainer` + `peft.LoraConfig`; all heavy ML imports are deferred to `_train()` so module import doesn't pull in the whole HuggingFace ecosystem.
